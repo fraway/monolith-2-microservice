@@ -1,4 +1,7 @@
-package com.example.demo;
+package com.example.pdf;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -8,11 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.entitiy.User;
-import com.example.demo.repository.UserRepository;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
@@ -32,9 +31,9 @@ class Request {
 }
 
 @RestController()
-@CrossOrigin(origins = "*")
 @RequestMapping("/pdfs")
-public class PDFController {
+@CrossOrigin(origins = "*")
+public class DefaultController {
 
     @Autowired
     UserRepository userRepository;
@@ -62,11 +61,9 @@ public class PDFController {
         }
 
         document.open();
-        Font bigFont = FontFactory.getFont(FontFactory.COURIER, 36, BaseColor.BLACK);
         Font font = FontFactory.getFont(FontFactory.COURIER, 16, BaseColor.BLACK);
 
         try {
-            // document.add(new Chunk(user.get().getUsername(), bigFont));
             document.addTitle(user.get().getUsername());
             document.add(new Chunk(request.bio, font));
         } catch (DocumentException e) {
@@ -75,7 +72,8 @@ public class PDFController {
         }
         document.close();
 
+        
+
         return fileName;
     }
-
 }
