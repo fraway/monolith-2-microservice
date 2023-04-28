@@ -1,26 +1,18 @@
 package com.example.pdf;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.util.Optional;
+import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.example.pdf.messaging.Messaging;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.FontFactory;
-import com.itextpdf.text.pdf.PdfWriter;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
@@ -30,50 +22,32 @@ class Request {
     public String bio;
 }
 
+@Data
+@AllArgsConstructor
+class Response {
+    public String filename;
+}
+
 @RestController()
 @RequestMapping("/pdfs")
 @CrossOrigin(origins = "*")
 public class DefaultController {
 
     @Autowired
-    UserRepository userRepository;
+    Messaging messaging;
 
     @PostMapping(consumes = "application/json", produces = "application/json")
-    public String create(@RequestBody Request request) {
-        Document document = new Document();
-
-        final Optional<User> user = userRepository.findById(request.userId);
-
-        if (!user.isPresent()) {
-            return "User not found";
-        }
-
-        String fileName = "generated/" + user.get().getUsername() + ".pdf";
-
+    public Response create(@RequestBody Request request) {
         try {
-            PdfWriter.getInstance(document, new FileOutputStream(fileName));
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
+            this.messaging.postPDFCreate(request.userId, request.bio);
+            return new Response("waiting...");
+
+        } catch (IOException e) {
             e.printStackTrace();
-        } catch (DocumentException e) {
-            // TODO Auto-generated catch block
+            return new Response("failure");
+        } catch (InterruptedException e) {
             e.printStackTrace();
+            return new Response("failure");
         }
-
-        document.open();
-        Font font = FontFactory.getFont(FontFactory.COURIER, 16, BaseColor.BLACK);
-
-        try {
-            document.addTitle(user.get().getUsername());
-            document.add(new Chunk(request.bio, font));
-        } catch (DocumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        document.close();
-
-        
-
-        return fileName;
     }
 }

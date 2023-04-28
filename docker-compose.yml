@@ -9,3 +9,13 @@ services:
       - MYSQL_PASSWORD=pass
     ports:
       - "3306:3306"
+
+    volumes:
+      - my-datavolume:/var/lib/mysql
+  nats:
+    image: nats:alpine
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+volumes:
+  my-datavolume:

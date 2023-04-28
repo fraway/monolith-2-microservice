@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.entitiy.User;
+import com.example.demo.messaging.Messaging;
 import com.example.demo.repository.UserRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,10 +25,20 @@ import io.swagger.v3.oas.annotations.Operation;
 public class UserController {
 
     @Autowired
+    Messaging messaging;
+
+    @Autowired
     UserRepository userRepository;
 
     @GetMapping
     public Iterable<User> list() {
+        try {
+            this.messaging.postStartup();
+            System.out.println("posted message");
+        } catch (IOException | InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         return this.userRepository.findAll();
     }
 
