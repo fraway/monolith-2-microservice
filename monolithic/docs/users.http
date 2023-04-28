@@ -1,0 +1,12 @@
+GET http://localhost:8080/users
+
+###
+
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+    "username": "John Doe",
+    "address": "123 Main St",
+    "email": "john@doe.com"
+}
