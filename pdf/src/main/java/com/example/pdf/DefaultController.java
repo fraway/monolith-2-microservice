@@ -16,13 +16,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-class Request {
-    @JsonProperty("user_id")
-    public Long userId;
-    public String bio;
-}
-
-@Data
 @AllArgsConstructor
 class Response {
     public String filename;
