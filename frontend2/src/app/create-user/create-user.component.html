@@ -1,0 +1,16 @@
+<form [formGroup]="form" (submit)="submit()">
+
+    <mat-form-field>
+        <input matInput placeholder="User name" formControlName="username">
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Email" formControlName="email">
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput placeholder="Address" formControlName="address">
+    </mat-form-field>
+
+    <button mat-raised-button>SUBMIT</button>
+</form>
