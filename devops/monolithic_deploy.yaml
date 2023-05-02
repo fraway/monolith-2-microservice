@@ -31,10 +31,27 @@ spec:
     spec:
       containers:
         - name: monolithic
-          image: monolithic:1.0
+          image: monolithic:1.2
+          imagePullPolicy: Never
+          env:
+            - name: DB_HOST
+              value: mysql
+          envFrom:
+            - configMapRef:
+                name: nats
           resources:
             limits:
-              memory: "128Mi"
-              cpu: "500m"
+              memory: "512Mi"
+              cpu: "250m"
+          livenessProbe:
+            httpGet:
+              port: 8080
+              path: actuator/health/liveness
+            initialDelaySeconds: 90
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: actuator/health/readiness
+            initialDelaySeconds: 50
           ports:
             - containerPort: 8080

@@ -31,10 +31,11 @@ spec:
     spec:
       containers:
         - name: pdf-web
-          image: pdf-web:1.0
+          image: fe:1.2
+          imagePullPolicy: Never
           resources:
             limits:
-              memory: "128Mi"
-              cpu: "500m"
+              memory: "64Mi"
+              cpu: "250m"
           ports:
             - containerPort: 80

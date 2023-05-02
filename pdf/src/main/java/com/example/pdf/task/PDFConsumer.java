@@ -32,14 +32,21 @@ public class PDFConsumer implements CommandLineRunner {
         System.out.println("PDFConsumer.run()");
         Subscription sub = messaging.listen();
 
-        // Read a message
-        Message msg = sub.nextMessage(Duration.ZERO);
 
-        String str = new String(msg.getData(), StandardCharsets.UTF_8);
-        System.out.println(str);
+        while (true) {
+            try {
+                // Read a message
+                Message msg = sub.nextMessage(Duration.ZERO);
 
-        Request req = new ObjectMapper().readValue(str, Request.class);
+                String str = new String(msg.getData(), StandardCharsets.UTF_8);
+                System.out.println(str);
 
-        this.pdfMaker.make(req);
+                Request req = new ObjectMapper().readValue(str, Request.class);
+
+                this.pdfMaker.make(req);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

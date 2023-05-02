@@ -1,10 +1,13 @@
-FROM node:16-alpine
+FROM node:16-alpine AS builder
 
 WORKDIR /build
 
-COPY . .
+COPY package.json package-lock.json ./
 
-RUN npm ci
+RUN npm i --force
+
+
+COPY . .
 
 RUN npm run build
 
@@ -13,4 +16,4 @@ FROM nginx:alpine
 
 WORKDIR /app
 
-COPY --from=0 /build/dist/fronted /usr/share/nginx/html
+COPY --from=builder /build/dist/frontend /usr/share/nginx/html

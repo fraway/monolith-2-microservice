@@ -14,12 +14,16 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.springframework.beans.factory.annotation.Value;
 
 @Service
 public class PdfMaker {
 
     @Autowired
     UserRepository userRepository;
+
+    @Value("${pdf.path}")
+    String pdfOutputPath;
 
     public Response make(Request request) {
         Document document = new Document();
@@ -30,7 +34,7 @@ public class PdfMaker {
             return new Response(null);
         }
 
-        String fileName = "generated/" + user.get().getUsername() + ".pdf";
+        String fileName = pdfOutputPath + "/" + user.get().getUsername() + ".pdf";
 
         try {
             PdfWriter.getInstance(document, new FileOutputStream(fileName));

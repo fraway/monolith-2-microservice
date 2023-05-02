@@ -31,10 +31,30 @@ spec:
     spec:
       containers:
         - name: pdf
-          image: pdf:1.0
+          image: pdf:1.2
+          imagePullPolicy: Never
+          envFrom:
+            - configMapRef:
+                name: nats
+          env:
+            - name: MONOLITHIC_URL
+              value: http://monolithic-svc:80
+            - name: OUTPUT_PATH # for pdf file creation - consider using a PV
+              value: /tmp
           resources:
             limits:
-              memory: "128Mi"
-              cpu: "500m"
+              memory: "512Mi"
+              cpu: "250m"
+          livenessProbe:
+            httpGet:
+              port: 8081
+              path: actuator/health/liveness
+            initialDelaySeconds: 90
+          # There is a known issue with the readiness check when using a CommandLineRunner.
+          # readinessProbe:
+          #   httpGet:
+          #     port: 8081
+          #     path: actuator/health/readiness
+            # initialDelaySeconds: 50
           ports:
             - containerPort: 8081
